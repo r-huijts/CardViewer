@@ -1,0 +1,7 @@
+-- This file is no longer needed!
+-- The app now uses SQLite which automatically creates the database and tables
+-- when you start the backend server for the first time.
+-- 
+-- No setup required - just run: npm start
+-- 
+-- The SQLite database will be created at: backend/data/cards.db

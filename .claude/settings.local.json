@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-react-app:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(chmod:*)",
+      "Bash(npm run build:*)",
+      "Bash(for file in *.ts)",
+      "Bash(do mv \"$file\" \"$file%.ts.js\")",
+      "Bash(done)",
+      "Bash(find:*)",
+      "Bash(rm:*)",
+      "Bash(timeout 5s npm start)",
+      "Bash(gtimeout:*)",
+      "Bash(pkill:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(curl:*)",
+      "Bash(npm test)",
+      "Bash(npm test:*)",
+      "Bash(node:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)"
+    ],
+    "deny": []
+  }
+}
