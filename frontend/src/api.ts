@@ -1,6 +1,29 @@
 import { Card, AuthStatus, LoginCredentials, CreateCardRequest, UpdateCardRequest } from './types';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3002';
+// Dynamic API base URL that adapts to environment
+const getApiBaseUrl = () => {
+  // Check for explicit override first
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // In production (Docker), use relative URLs since nginx proxies for us
+  if (process.env.NODE_ENV === 'production') {
+    return '';
+  }
+  
+  // In development, use the actual backend port
+  return process.env.REACT_APP_API_URL || 'http://localhost:5001';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Log the API configuration for debugging
+console.log(`🔗 API Base URL configured:`, API_BASE_URL || '(relative URLs - nginx proxy)');
+console.log(`🌍 Environment:`, process.env.NODE_ENV);
+if (process.env.REACT_APP_API_URL !== undefined) {
+  console.log(`⚙️ Custom API URL:`, process.env.REACT_APP_API_URL);
+}
 
 class ApiService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {

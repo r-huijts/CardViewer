@@ -125,9 +125,30 @@ docker-compose up -d
 ### Step 5: Configuration
 
 **Environment Variables:**
-- `SESSION_SECRET`: Random secret key for sessions
+
+*Backend Configuration:*
+- `SESSION_SECRET`: Random secret key for sessions (REQUIRED)
 - `NODE_ENV`: Set to `production`
 - `PORT`: Backend port (default: 5001)
+- `DATABASE_PATH`: Database file path (default: /app/data/cards.db)
+- `UPLOAD_DIR`: Upload directory path (default: /app/uploads)
+
+*CORS Configuration:*
+- `FRONTEND_URL`: Frontend URL for CORS (optional)
+- `CORS_ORIGINS`: Comma-separated list of allowed origins (optional)
+
+*Frontend Configuration:*
+- `REACT_APP_API_URL`: API URL for frontend (leave empty for Docker nginx proxy)
+
+**Example .env file:**
+```bash
+# Copy to .env and customize
+SESSION_SECRET=your-super-secret-key-here
+NODE_ENV=production
+FRONTEND_URL=https://your-domain.com
+CORS_ORIGINS=https://your-domain.com,http://localhost:3000
+REACT_APP_API_URL=
+```
 
 **Persistent Data:**
 - Database: Stored in `backend_data` volume

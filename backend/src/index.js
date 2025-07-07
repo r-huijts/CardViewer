@@ -12,14 +12,31 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-const corsOrigins = process.env.NODE_ENV === 'production' 
-  ? [
-      'http://localhost:3000',
-      'http://localhost',
-      process.env.FRONTEND_URL, // Allow custom frontend URL
-    ].filter(Boolean) // Remove undefined values
-  : 'http://localhost:3000';
+// Dynamic CORS configuration
+const getCorsOrigins = () => {
+  if (process.env.CORS_ORIGINS) {
+    // Allow explicit CORS origins override
+    return process.env.CORS_ORIGINS.split(',').map(origin => origin.trim());
+  }
+  
+  if (process.env.NODE_ENV === 'production') {
+    // In production, be more permissive but still secure
+    const origins = ['http://localhost:3000', 'http://localhost'];
+    
+    // Add any custom frontend URL
+    if (process.env.FRONTEND_URL) {
+      origins.push(process.env.FRONTEND_URL);
+    }
+    
+    return origins;
+  }
+  
+  // In development, allow common dev ports
+  return ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173']; // Vite dev server
+};
+
+const corsOrigins = getCorsOrigins();
+console.log(`🌐 CORS Origins configured:`, corsOrigins);
 
 app.use(cors({
   origin: corsOrigins,
