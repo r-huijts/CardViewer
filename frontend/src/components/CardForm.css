@@ -1,0 +1,164 @@
+.card-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.card-form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 3px solid #e85a2f;
+  box-shadow: 0 8px 25px rgba(232, 90, 47, 0.2);
+  font-family: 'Ropa Sans', sans-serif;
+}
+
+.card-form-container h2 {
+  text-align: center;
+  color: #e85a2f;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #e85a2f;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #e85a2f;
+  box-shadow: 0 0 0 3px rgba(232, 90, 47, 0.1);
+}
+
+.form-group input:disabled,
+.form-group textarea:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.current-image {
+  margin-top: 10px;
+}
+
+.current-image p {
+  margin: 0 0 10px 0;
+  color: #e85a2f;
+  font-size: 0.9rem;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e74c3c;
+}
+
+.error-message {
+  color: #d32f2f;
+  margin-bottom: 15px;
+  text-align: center;
+  padding: 10px;
+  background: #ffebee;
+  border-radius: 5px;
+  border: 1px solid #d32f2f;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 25px;
+}
+
+.form-actions button {
+  padding: 12px 24px;
+  border: 2px solid #e74c3c;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-actions button[type="button"] {
+  background: transparent;
+  color: #e85a2f;
+}
+
+.form-actions button[type="button"]:hover:not(:disabled) {
+  background: #e74c3c;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.form-actions button[type="submit"] {
+  background: #e74c3c;
+  color: white;
+}
+
+.form-actions button[type="submit"]:hover:not(:disabled) {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.form-actions button:disabled {
+  background: #ddd;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .card-form-container {
+    padding: 20px;
+    width: 95%;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions button {
+    width: 100%;
+  }
+} 

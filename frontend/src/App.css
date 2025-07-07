@@ -1,0 +1,108 @@
+.app {
+  min-height: 100vh;
+  background: #f5e6c8;
+  font-family: 'Ropa Sans', sans-serif;
+}
+
+.app-header {
+  background: #f5e6c8;
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: none;
+  position: relative;
+  display: block;
+}
+
+.app-header h1 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.admin-login-btn {
+  position: absolute;
+  top: 42px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: #e85a2f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(232, 90, 47, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.admin-login-btn:hover {
+  background: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(232, 90, 47, 0.4);
+}
+
+.app-main {
+  padding: 0 0 40px 0;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  background: #f5e6c8;
+}
+
+.app-footer p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+  font-family: 'Ropa Sans', sans-serif;
+}
+
+.app-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5e6c8;
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
+.app-error {
+  text-align: center;
+  padding: 40px;
+  color: #d32f2f;
+}
+
+.app-error button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #e85a2f;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.app-error button:hover {
+  background: #d35400;
+}
+
+@media (max-width: 768px) {
+  .app-header h1 {
+    font-size: 2rem;
+  }
+  
+  .admin-login-btn {
+    width: 40px;
+    height: 40px;
+    top: 35px;
+  }
+} 
