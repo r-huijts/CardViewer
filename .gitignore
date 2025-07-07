@@ -20,6 +20,9 @@ yarn-error.log*
 *.sqlite
 *.sqlite3
 
+# Session storage
+sessions.db
+
 # IDE and editor files
 .vscode/
 .idea/
