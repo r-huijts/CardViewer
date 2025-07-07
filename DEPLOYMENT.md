@@ -1,12 +1,290 @@
 # CardViewer Deployment Guide
 
-## Prerequisites
+## Deployment Options
+
+### Option 1: Docker/Portainer (Recommended)
+For Docker-based deployment with Portainer management - see "Docker Deployment" section below.
+
+### Option 2: VPS/Dedicated Server (Full Control)
+For servers with SSH access and full control - see "VPS Deployment" section below.
+
+### Option 3: cPanel/Shared Hosting
+For cPanel or shared hosting without SSH access - see "Shared Hosting Deployment" section below.
+
+---
+
+## Docker Deployment (Portainer Compatible)
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Portainer (optional, for web-based management)
+- 2GB+ RAM recommended
+
+### Step 1: Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/your-repo/CardViewer.git
+cd CardViewer
+
+# Copy environment file
+cp .env.example .env
+
+# Edit environment variables
+nano .env
+
+# Build and start services
+docker-compose up -d
+```
+
+### Step 2: Using Portainer
+
+1. **Access Portainer Web Interface**
+   - Navigate to your Portainer instance (usually `http://localhost:9000`)
+
+2. **Deploy Stack**
+   - Go to "Stacks" → "Add Stack"
+   - Name: `cardviewer`
+   - Build method: "Repository"
+   - Repository URL: `https://github.com/your-repo/CardViewer.git`
+   - Compose path: `docker-compose.yml`
+   - Environment variables:
+     ```
+     SESSION_SECRET=your-random-secret-key-here
+     ```
+
+3. **Deploy the Stack**
+   - Click "Deploy the stack"
+   - Monitor deployment in the logs
+
+### Step 3: Alternative - Upload Compose File
+
+1. **Copy docker-compose.yml**
+   ```yaml
+   version: '3.8'
+
+   services:
+     backend:
+       build: 
+         context: ./backend
+         dockerfile: Dockerfile
+       container_name: cardviewer-backend
+       restart: unless-stopped
+       environment:
+         - NODE_ENV=production
+         - PORT=5000
+         - SESSION_SECRET=${SESSION_SECRET:-change-this-secret-key}
+         - DATABASE_PATH=/app/data/cards.db
+         - UPLOAD_DIR=/app/uploads
+       ports:
+         - "5000:5000"
+       volumes:
+         - backend_data:/app/data
+         - backend_uploads:/app/uploads
+       networks:
+         - cardviewer-network
+
+     frontend:
+       build: 
+         context: ./frontend
+         dockerfile: Dockerfile
+       container_name: cardviewer-frontend
+       restart: unless-stopped
+       ports:
+         - "3000:80"
+       depends_on:
+         - backend
+       networks:
+         - cardviewer-network
+
+   networks:
+     cardviewer-network:
+       driver: bridge
+
+   volumes:
+     backend_data:
+       driver: local
+     backend_uploads:
+       driver: local
+   ```
+
+2. **Deploy via Portainer**
+   - Go to "Stacks" → "Add Stack"
+   - Name: `cardviewer`
+   - Build method: "Web editor"
+   - Paste the docker-compose.yml content
+   - Add environment variables if needed
+   - Click "Deploy the stack"
+
+### Step 4: Access the Application
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000/api
+- **Default Admin**: username: `admin`, password: `admin123`
+
+### Step 5: Configuration
+
+**Environment Variables:**
+- `SESSION_SECRET`: Random secret key for sessions
+- `NODE_ENV`: Set to `production`
+- `PORT`: Backend port (default: 5000)
+
+**Persistent Data:**
+- Database: Stored in `backend_data` volume
+- Uploads: Stored in `backend_uploads` volume
+
+**Port Mapping:**
+- Frontend: `3000:80`
+- Backend: `5000:5000`
+
+### Management Commands
+
+```bash
+# View logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Stop services
+docker-compose down
+
+# Update and rebuild
+docker-compose pull
+docker-compose up -d --build
+
+# Backup data
+docker run --rm -v cardviewer_backend_data:/data -v $(pwd):/backup alpine tar czf /backup/cardviewer-backup.tar.gz /data
+```
+
+### Troubleshooting
+
+- **Port conflicts**: Change ports in docker-compose.yml
+- **Build failures**: Check Dockerfile syntax and dependencies
+- **Database issues**: Verify volume permissions and paths
+- **Network errors**: Ensure containers are on the same network
+
+---
+
+## Shared Hosting Deployment (cPanel/File Manager)
+
+### Prerequisites
+- cPanel hosting account or similar control panel
+- Node.js support (check with your hosting provider)
+- MySQL database access (or SQLite support)
+
+### Step 1: Build the Application Locally
+
+```bash
+# Clone or have the CardViewer project locally
+cd CardViewer
+
+# Install frontend dependencies and build
+cd frontend
+npm install
+npm run build
+
+# Build backend (if Node.js is supported)
+cd ../backend
+npm install
+npm run build
+```
+
+### Step 2: Deploy Frontend (Static Files)
+
+1. **Using File Manager:**
+   - Access your cPanel File Manager
+   - Navigate to `public_html` (or your domain's public folder)
+   - Create a folder named `cardviewer` (optional)
+   - Upload all files from `frontend/build/` to this folder
+   - Extract if uploaded as zip
+
+2. **Using FTP:**
+   ```bash
+   # Upload via FTP client
+   ftp your-domain.com
+   cd public_html
+   put -r frontend/build/* .
+   ```
+
+### Step 3: Deploy Backend (If Node.js Supported)
+
+1. **Check Node.js Support:**
+   - Look for "Node.js" in your cPanel
+   - Contact hosting provider if unsure
+
+2. **Upload Backend Files:**
+   - Create a `backend` folder outside `public_html`
+   - Upload backend files (excluding `node_modules`)
+   - Install dependencies via cPanel Node.js interface or terminal
+
+3. **Configure Environment:**
+   - Create `.env` file in backend folder:
+   ```env
+   NODE_ENV=production
+   PORT=3000
+   SESSION_SECRET=your-random-secret-here
+   DATABASE_PATH=./data/cards.db
+   UPLOAD_DIR=./uploads
+   ```
+
+### Step 4: Database Setup
+
+**Option A: SQLite (Simpler)**
+- Upload the `backend/data/cards.db` file
+- Ensure proper file permissions (644)
+
+**Option B: MySQL (via cPanel)**
+1. Create MySQL database in cPanel
+2. Import `backend/database.sql`
+3. Update `.env` with MySQL credentials:
+   ```env
+   DB_HOST=localhost
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_NAME=your_db_name
+   ```
+
+### Step 5: Configure Application
+
+1. **Update API URLs:**
+   - Edit `frontend/src/api.ts` before building
+   - Change API base URL to your domain:
+   ```typescript
+   const API_BASE_URL = 'https://yourdomain.com/api';
+   ```
+
+2. **Start Node.js Application:**
+   - Use cPanel Node.js interface
+   - Set startup file to `src/index.js`
+   - Start the application
+
+### Step 6: Static-Only Deployment (No Backend)
+
+If Node.js isn't supported, deploy as static site:
+
+1. **Modify Frontend for Static Mode:**
+   - Create `frontend/src/data/cards.json` with sample data
+   - Update components to use static data
+   - Remove admin functionality
+
+2. **Build and Deploy:**
+   ```bash
+   npm run build
+   ```
+   - Upload `build/` contents to `public_html`
+
+---
+
+## VPS Deployment (Full Control)
+
+### Prerequisites
 - Linux server with root/sudo access
 - Node.js 18+ and npm
 - nginx (for reverse proxy)
 - PM2 (for process management)
 
-## 1. Server Setup
+### 1. Server Setup
 
 ```bash
 # Update system
@@ -25,7 +303,7 @@ sudo mkdir -p /var/www/cardviewer
 sudo chown $USER:$USER /var/www/cardviewer
 ```
 
-## 2. Upload Application
+### 2. Upload Application
 
 ```bash
 # Transfer files to server (from your local machine)
@@ -36,7 +314,7 @@ cd /var/www/cardviewer
 git clone https://github.com/your-repo/CardViewer.git .
 ```
 
-## 3. Install Dependencies & Build
+### 3. Install Dependencies & Build
 
 ```bash
 cd /var/www/cardviewer
@@ -55,7 +333,7 @@ sudo mkdir -p /var/www/html/cardviewer
 sudo cp -r build/* /var/www/html/cardviewer/
 ```
 
-## 4. Configure Environment
+### 4. Configure Environment
 
 ```bash
 # Create production environment file
@@ -73,7 +351,7 @@ mkdir -p uploads
 chmod 755 uploads
 ```
 
-## 5. Setup Database
+### 5. Setup Database
 
 ```bash
 cd /var/www/cardviewer/backend
@@ -82,7 +360,7 @@ cd /var/www/cardviewer/backend
 chmod 644 database.db uploads/
 ```
 
-## 6. Configure PM2
+### 6. Configure PM2
 
 ```bash
 cd /var/www/cardviewer/backend
@@ -114,7 +392,7 @@ pm2 save
 pm2 startup
 ```
 
-## 7. Configure Nginx
+### 7. Configure Nginx
 
 ```bash
 # Create nginx configuration
@@ -158,7 +436,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## 8. Setup SSL (Optional but Recommended)
+### 8. Setup SSL (Optional but Recommended)
 
 ```bash
 # Install certbot
@@ -171,7 +449,7 @@ sudo certbot --nginx -d your-domain.com
 sudo systemctl enable certbot.timer
 ```
 
-## 9. Firewall Configuration
+### 9. Firewall Configuration
 
 ```bash
 # Configure UFW firewall
@@ -180,7 +458,7 @@ sudo ufw allow 'Nginx Full'
 sudo ufw enable
 ```
 
-## 10. Verify Deployment
+### 10. Verify Deployment
 
 ```bash
 # Check PM2 status
@@ -194,30 +472,36 @@ pm2 logs cardviewer-backend
 sudo tail -f /var/log/nginx/access.log
 ```
 
-## Maintenance Commands
+---
 
-```bash
-# Restart application
-pm2 restart cardviewer-backend
+## Hosting Provider Recommendations
 
-# Update application
-cd /var/www/cardviewer
-git pull
-cd backend && npm install --production
-cd ../frontend && npm install && npm run build
-sudo cp -r build/* /var/www/html/cardviewer/
-pm2 restart cardviewer-backend
+### For Full-Featured Deployment:
+- **DigitalOcean** - VPS with Node.js support
+- **Linode** - Reliable VPS hosting
+- **AWS EC2** - Scalable cloud hosting
 
-# View logs
-pm2 logs cardviewer-backend
-sudo tail -f /var/log/nginx/error.log
+### For Shared Hosting:
+- **Hostinger** - cPanel with Node.js support
+- **A2 Hosting** - Developer-friendly shared hosting
+- **SiteGround** - Managed WordPress/cPanel hosting
 
-# Backup database
-cp /var/www/cardviewer/backend/database.db /backups/cardviewer-$(date +%Y%m%d).db
-```
+### For Static-Only Deployment:
+- **Netlify** - Free static hosting with forms
+- **Vercel** - Optimized for React apps
+- **GitHub Pages** - Free static hosting
+
+---
 
 ## Troubleshooting
 
+### Shared Hosting Issues:
+- **Node.js not supported**: Deploy as static site or upgrade hosting
+- **Database connection errors**: Check MySQL credentials in cPanel
+- **File upload issues**: Verify folder permissions (755 for folders, 644 for files)
+- **API calls failing**: Check if backend is running in cPanel Node.js interface
+
+### VPS Issues:
 - **502 Bad Gateway**: Check if backend is running with `pm2 status`
 - **File upload issues**: Verify uploads directory permissions
 - **Database issues**: Check database file permissions and path
