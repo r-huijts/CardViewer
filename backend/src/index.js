@@ -13,13 +13,27 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
+const corsOrigins = process.env.NODE_ENV === 'production' 
+  ? [
+      'http://localhost:3000',
+      'http://localhost',
+      process.env.FRONTEND_URL, // Allow custom frontend URL
+    ].filter(Boolean) // Remove undefined values
+  : 'http://localhost:3000';
+
 app.use(cors({
-  origin: 'http://localhost:3000', // React app URL
+  origin: corsOrigins,
   credentials: true
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Request logging middleware for debugging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.get('Origin')} - User-Agent: ${req.get('User-Agent')?.substring(0, 50)}`);
+  next();
+});
 
 // Session configuration with SQLite store
 app.use(session({

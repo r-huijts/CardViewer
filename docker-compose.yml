@@ -13,6 +13,7 @@ services:
       - SESSION_SECRET=${SESSION_SECRET:-change-this-secret-key}
       - DATABASE_PATH=/app/data/cards.db
       - UPLOAD_DIR=/app/uploads
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
     ports:
       - "5001:5001"
     volumes:
