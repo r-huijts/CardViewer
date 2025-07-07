@@ -72,12 +72,12 @@ docker-compose up -d
        restart: unless-stopped
        environment:
          - NODE_ENV=production
-         - PORT=5000
+         - PORT=5001
          - SESSION_SECRET=${SESSION_SECRET:-change-this-secret-key}
          - DATABASE_PATH=/app/data/cards.db
          - UPLOAD_DIR=/app/uploads
        ports:
-         - "5000:5000"
+         - "5001:5001"
        volumes:
          - backend_data:/app/data
          - backend_uploads:/app/uploads
@@ -119,7 +119,7 @@ docker-compose up -d
 ### Step 4: Access the Application
 
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000/api
+- **Backend API**: http://localhost:5001/api
 - **Default Admin**: username: `admin`, password: `admin123`
 
 ### Step 5: Configuration
@@ -127,7 +127,7 @@ docker-compose up -d
 **Environment Variables:**
 - `SESSION_SECRET`: Random secret key for sessions
 - `NODE_ENV`: Set to `production`
-- `PORT`: Backend port (default: 5000)
+- `PORT`: Backend port (default: 5001)
 
 **Persistent Data:**
 - Database: Stored in `backend_data` volume
@@ -135,7 +135,7 @@ docker-compose up -d
 
 **Port Mapping:**
 - Frontend: `3000:80`
-- Backend: `5000:5000`
+- Backend: `5001:5001`
 
 ### Management Commands
 
