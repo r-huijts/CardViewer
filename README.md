@@ -90,10 +90,19 @@ The application will be available at:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
-## Default Admin Credentials
+## Admin Access
 
+To access the admin features (add/edit/delete cards):
+
+**Default Admin Credentials:**
 - Username: `admin`
 - Password: `admin123`
+
+**Admin Features:**
+- Add new cards with title, subtitle, description, and image upload
+- Edit existing cards (click the green "Edit" button on any card)
+- Delete cards (click the red "Delete" button on any card with confirmation)
+- All changes are immediately reflected in the card grid
 
 ## Project Structure
 
