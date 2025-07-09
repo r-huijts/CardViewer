@@ -1,6 +1,9 @@
 # Build stage
 FROM node:16-alpine as build
 
+# Set production environment
+ENV NODE_ENV=production
+
 # For passing environment variables at build time
 ARG REACT_APP_API_URL
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
