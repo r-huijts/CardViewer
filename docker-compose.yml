@@ -33,8 +33,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - REACT_APP_API_URL=http://localhost:5001
     container_name: cardviewer-frontend
     restart: unless-stopped
     ports:
