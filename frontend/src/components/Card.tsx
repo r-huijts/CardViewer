@@ -11,13 +11,31 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ card, isAdmin = false, onEdit, onDelete }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isClickFlipped, setIsClickFlipped] = useState(false);
+  const [isHoverFlipped, setIsHoverFlipped] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Card is flipped if either click-flipped OR hover-flipped
+  const isFlipped = isClickFlipped || isHoverFlipped;
 
   const handleCardClick = () => {
     if (!isDeleting) {
-      setIsFlipped(!isFlipped);
+      setIsClickFlipped(!isClickFlipped);
+      // Reset hover state when clicking to avoid conflicts
+      setIsHoverFlipped(false);
     }
+  };
+
+  const handleMouseEnter = () => {
+    // Only allow hover flip if not permanently flipped by click
+    if (!isClickFlipped && !isDeleting) {
+      setIsHoverFlipped(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    // Always reset hover state when leaving
+    setIsHoverFlipped(false);
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -54,7 +72,7 @@ const Card: React.FC<CardProps> = ({ card, isAdmin = false, onEdit, onDelete }) 
         {card.subtitle && <p className="card-main-subtitle">{card.subtitle}</p>}
       </div>
       
-      <div className={`card ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
+      <div className={`card ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         {isAdmin && (
           <div className="card-actions">
             <button 
